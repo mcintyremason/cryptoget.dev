@@ -66,13 +66,13 @@
 
     /* Advanced Options */
     "skipLibCheck": true /* Skip type checking of declaration files. */,
-    "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
-    "paths": {
-      "@daos/*": ["daos/*"],
-      "@entities/*": ["entities/*"],
-      "@shared/*": ["shared/*"],
-      "@server": ["Server"]
-    }
+    "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
+    // "paths": {
+    //   "@daos/*": ["daos/*"],
+    //   "@entities/*": ["entities/*"],
+    //   "@shared/*": ["shared/*"],
+    //   "@server": ["Server"]
+    // }
   },
   "include": ["src/**/*.ts", "spec/**/*.ts"],
   "exclude": ["src/public/"]

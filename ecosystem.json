@@ -2,7 +2,7 @@
   "apps": [
     {
       "name": "cryptoget.dev",
-      "script": "/usr/local/bin/node -r module-alias/register ./dist/index.js",
+      "script": "node ./dist/index.js",
       "watch": ["*"],
       "ignore_watch": ["node_modules", "public"],
       "cron_restart": "0 0 * * *",
