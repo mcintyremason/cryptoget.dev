@@ -5,8 +5,8 @@
     "build": "./node_modules/.bin/ts-node build.ts",
     "lint": "eslint . --ext .ts",
     "start": "node -r module-alias/register ./dist",
-    "start-prod": "NODE_ENV=production yarn build && node -r module-alias/register ./dist",
     "start:dev": "nodemon",
+    "start:prod": "NODE_ENV=production yarn build && node -r module-alias/register ./dist",
     "start-pm2": "NODE_ENV=development yarn build && pm2 start ecosystem.json"
   },
   "nodemonConfig": {
