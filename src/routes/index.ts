@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { healthCheck } from "src/routes/Health/Health";
-import { web3Check } from "src/routes/Web3/Web3";
+import { healthCheck } from "./Health/Health";
+import { web3Check } from "./Web3/Web3";
 
 // Health route(s)
 const healthRouter = Router();

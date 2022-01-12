@@ -1,0 +1,13 @@
+{
+  "apps": [
+    {
+      "name": "cryptoget.dev",
+      "script": "node -r module-alias/register ./dist",
+      "watch": ["*"],
+      "ignore_watch": ["node_modules", "public"],
+      "cron_restart": "0 0 * * *",
+      "autorestart": true,
+      "env": {}
+    }
+  ]
+}
