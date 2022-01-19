@@ -1,5 +1,6 @@
 import StatusCodes from "http-status-codes";
 import { Request, Response } from "express";
+import { BalanceTotalsResponse } from "./types/Cryptocompare";
 const cc = require("cryptocompare");
 global.fetch = require("node-fetch");
 
@@ -12,28 +13,39 @@ export const cryptoHealthCheck = async (req: Request, res: Response) => {
   return res.status(OK).json({ response });
 };
 
-export const balanceTotals = async (req: Request, res: Response) => {
-  const jsonObj = req.body;
+export const getBalanceTotals = async (req: Request, res: Response) => {
+  console.log(req.query);
 
+  const balanceTotalsQuery = req.query;
   const cryptoNamesArr = [];
-
-  for (const key of Object.keys(jsonObj.currencies)) {
-    cryptoNamesArr.push(jsonObj.currencies[key].name);
-  }
+  const cryptoBalances: BalanceTotalsResponse = {
+    currencies: {},
+    total: 0,
+  };
 
   try {
+    for (const key of Object.keys(balanceTotalsQuery)) {
+      cryptoNamesArr.push(key);
+      cryptoBalances.currencies = {
+        ...cryptoBalances.currencies,
+        ...{ [key]: { holdings: 0 } },
+      };
+      cryptoBalances.currencies[key].holdings = parseFloat(
+        balanceTotalsQuery[key] as string,
+      );
+    }
+
     const prices = await cc.priceMulti(cryptoNamesArr, "USD");
 
     for (const key of Object.keys(prices)) {
-      jsonObj.currencies[key].price = prices[key].USD;
-      jsonObj.currencies[key].total =
-        jsonObj.currencies[key].holdings * prices[key].USD;
-      jsonObj.total += jsonObj.currencies[key].total;
+      cryptoBalances.currencies[key].price = prices[key].USD;
+      cryptoBalances.currencies[key].total =
+        (cryptoBalances.currencies[key].holdings as number) * prices[key].USD;
+      cryptoBalances.total += cryptoBalances.currencies[key].total as number;
     }
-
-    return res.status(OK).json(jsonObj);
   } catch (e) {
     console.error(e);
     return res.status(500).send(e);
   }
+  return res.status(OK).json({ cryptoBalances });
 };

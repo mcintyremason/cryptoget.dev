@@ -2,8 +2,8 @@ import { Router } from "express";
 import { healthCheck } from "./Health/Health";
 import { web3Check } from "./Web3/Web3";
 import {
-  balanceTotals,
   cryptoHealthCheck,
+  getBalanceTotals,
 } from "./Cryptocompare/Cryptocompare";
 
 // Health route(s)
@@ -17,7 +17,7 @@ web3Router.get("/", web3Check);
 // Cryptocompare route(s)
 const cyptocompareRouter = Router();
 cyptocompareRouter.get("/health", cryptoHealthCheck);
-cyptocompareRouter.post("/balance-totals", balanceTotals);
+cyptocompareRouter.get("/balance-totals", getBalanceTotals);
 
 // Export the base-router
 const baseRouter = Router();
