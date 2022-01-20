@@ -28,9 +28,8 @@ export const getBalanceTotals = async (req: Request, res: Response) => {
         ...cryptoBalances.currencies,
         ...{ [key]: { symbol: key, holdings: 0 } },
       };
-      cryptoBalances.currencies[key].holdings = parseFloat(
-        balanceTotalsQuery[key] as string,
-      );
+      cryptoBalances.currencies[key].holdings =
+        parseFloat(balanceTotalsQuery[key] as string) || 0;
     }
 
     const prices = await cc.priceMulti(cryptoNamesArr, "USD");
