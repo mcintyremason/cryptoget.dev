@@ -1,5 +1,5 @@
 export type Crypto = {
-  name?: string;
+  symbol?: string;
   holdings?: number;
   price?: number;
   total?: number;

@@ -14,8 +14,6 @@ export const cryptoHealthCheck = async (req: Request, res: Response) => {
 };
 
 export const getBalanceTotals = async (req: Request, res: Response) => {
-  console.log(req.query);
-
   const balanceTotalsQuery = req.query;
   const cryptoNamesArr = [];
   const cryptoBalances: BalanceTotalsResponse = {
@@ -28,7 +26,7 @@ export const getBalanceTotals = async (req: Request, res: Response) => {
       cryptoNamesArr.push(key);
       cryptoBalances.currencies = {
         ...cryptoBalances.currencies,
-        ...{ [key]: { holdings: 0 } },
+        ...{ [key]: { symbol: key, holdings: 0 } },
       };
       cryptoBalances.currencies[key].holdings = parseFloat(
         balanceTotalsQuery[key] as string,
@@ -47,5 +45,5 @@ export const getBalanceTotals = async (req: Request, res: Response) => {
     console.error(e);
     return res.status(500).send(e);
   }
-  return res.status(OK).json({ cryptoBalances });
+  return res.status(OK).json({ ...cryptoBalances });
 };
