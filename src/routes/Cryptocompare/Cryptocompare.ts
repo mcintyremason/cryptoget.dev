@@ -1,6 +1,7 @@
 import StatusCodes from 'http-status-codes'
 import { Request, Response } from 'express'
-import { BalanceTotalsResponse } from './types/Cryptocompare'
+import { BalanceTotalsResponse, CryptoListData } from './types/Cryptocompare'
+import { sortObjectByKeys } from 'shared/functions'
 const cc = require('cryptocompare')
 global.fetch = require('node-fetch')
 
@@ -46,4 +47,41 @@ export const getBalanceTotals = async (req: Request, res: Response) => {
   return res.status(OK).json({ ...cryptoBalances })
 }
 
-export const getCoinList = async (req: Request, res: Response) => {}
+export const getCryptoList = async (req: Request, res: Response) => {
+  let sortedReducedCryptos = {}
+
+  try {
+    let cryptoSymbols = {}
+    let reducedCryptos = {}
+    const coinListResponse = await cc.coinList()
+
+    cryptoSymbols = { ...coinListResponse.Data }
+
+    const reduceFields = (cryptoData: CryptoListData) => {
+      return Object.entries(cryptoData).reduce((acc, [key, value]) => {
+        switch (key) {
+          case 'FullName':
+            return { ...acc, ...{ [key]: value } }
+          case 'Symbol':
+            return { ...acc, ...{ [key]: value } }
+          default:
+            return acc
+        }
+      }, {})
+    }
+
+    for (const entry of Object.entries(cryptoSymbols)) {
+      const [key, value] = entry
+      const reducedCrypto = {
+        [key]: reduceFields(value as CryptoListData),
+      }
+      reducedCryptos = { ...reducedCryptos, ...reducedCrypto }
+    }
+
+    sortedReducedCryptos = sortObjectByKeys(reducedCryptos)
+  } catch (e) {
+    console.error(e)
+    return res.status(500).send(e)
+  }
+  return res.status(OK).json(sortedReducedCryptos)
+}

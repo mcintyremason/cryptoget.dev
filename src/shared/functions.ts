@@ -9,3 +9,9 @@ export const pErr = (err: Error) => {
 export const getRandomInt = () => {
   return Math.floor(Math.random() * 1_000_000_000_000)
 }
+
+export const sortObjectByKeys = (o: any) => {
+  return Object.keys(o)
+    .sort()
+    .reduce((r: any, k) => ((r[k] = o[k]), r), {})
+}
