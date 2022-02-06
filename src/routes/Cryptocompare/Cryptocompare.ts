@@ -1,7 +1,7 @@
-import StatusCodes from 'http-status-codes'
 import { Request, Response } from 'express'
-import { BalanceTotalsResponse, CryptoListData } from './types/Cryptocompare'
-import { sortObjectByKeys } from 'shared/functions'
+import StatusCodes from 'http-status-codes'
+import { camelize, sortObjectByFullName } from 'shared/functions'
+import { BalanceTotalsResponse, CryptoListData, ReducedCryptoListData } from './types/Cryptocompare'
 const cc = require('cryptocompare')
 global.fetch = require('node-fetch')
 
@@ -47,38 +47,43 @@ export const getBalanceTotals = async (req: Request, res: Response) => {
   return res.status(OK).json({ ...cryptoBalances })
 }
 
-export const getCryptoList = async (req: Request, res: Response) => {
+export const getReducedCryptoList = async (req: Request, res: Response) => {
   let sortedReducedCryptos = {}
 
   try {
     let cryptoSymbols = {}
-    let reducedCryptos = {}
+    const reducedCryptos: any[] = []
     const coinListResponse = await cc.coinList()
 
     cryptoSymbols = { ...coinListResponse.Data }
 
-    const reduceFields = (cryptoData: CryptoListData) => {
+    // Reduce original response to fields we care about in the FE app
+    const reduceFields = (cryptoData: CryptoListData): ReducedCryptoListData => {
       return Object.entries(cryptoData).reduce((acc, [key, value]) => {
         switch (key) {
           case 'FullName':
-            return { ...acc, ...{ [key]: value } }
+            return { ...acc, ...{ [camelize(key)]: value } }
           case 'Symbol':
-            return { ...acc, ...{ [key]: value } }
+            return { ...acc, ...{ [camelize(key)]: value } }
+          case 'TotalCoinsMined':
+            return { ...acc, ...{ [camelize(key)]: value } }
           default:
             return acc
         }
-      }, {})
+      }, {}) as ReducedCryptoListData
     }
 
+    // create object of reduced values for cryptos
     for (const entry of Object.entries(cryptoSymbols)) {
       const [key, value] = entry
-      const reducedCrypto = {
-        [key]: reduceFields(value as CryptoListData),
+      const reducedCrypto = reduceFields(value as CryptoListData)
+
+      if (reducedCrypto?.totalCoinsMined > 10000000) {
+        reducedCryptos.push(reducedCrypto)
       }
-      reducedCryptos = { ...reducedCryptos, ...reducedCrypto }
     }
 
-    sortedReducedCryptos = sortObjectByKeys(reducedCryptos)
+    sortedReducedCryptos = sortObjectByFullName(reducedCryptos)
   } catch (e) {
     console.error(e)
     return res.status(500).send(e)

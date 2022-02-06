@@ -1,7 +1,11 @@
 import { Router } from 'express'
+import {
+  cryptoHealthCheck,
+  getBalanceTotals,
+  getReducedCryptoList,
+} from './Cryptocompare/Cryptocompare'
 import { healthCheck } from './Health/Health'
 import { web3Check } from './Web3/Web3'
-import { cryptoHealthCheck, getBalanceTotals, getCryptoList } from './Cryptocompare/Cryptocompare'
 
 // Health route(s)
 const healthRouter = Router()
@@ -15,7 +19,7 @@ web3Router.get('/', web3Check)
 const cryptocompareRouter = Router()
 cryptocompareRouter.get('/health', cryptoHealthCheck)
 cryptocompareRouter.get('/balance-totals', getBalanceTotals)
-cryptocompareRouter.get('/get-crypto-list', getCryptoList)
+cryptocompareRouter.get('/get-crypto-list', getReducedCryptoList)
 
 // Export the base-router
 const baseRouter = Router()

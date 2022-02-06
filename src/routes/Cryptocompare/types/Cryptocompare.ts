@@ -64,3 +64,13 @@ export type CryptoListData = {
   AlgorithmType: string
   Difficulty: number
 }
+
+export type CryptoDataWithKey = {
+  [key: string]: CryptoListData
+}
+
+export type ReducedCryptoListData = {
+  fullName: string
+  symbol: string
+  totalCoinsMined: number
+}
